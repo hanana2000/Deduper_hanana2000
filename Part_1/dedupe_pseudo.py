@@ -38,12 +38,10 @@ def umi_read(umis: IOstr) -> list:
 		read in umi and add it to the umi_list
 	return umi_list 
 
-def true_start(pos: int, rev: bool) -> int:
-	if it is reverse: 
-		# length includes softclipping on both sides 
-		start5 = pos - softclip_l + length of read - 1
-	else: # forward strand
-		start5 = pos - softclip_l 
+# getting the true start position from leftmost start and softclipping
+def true_start(pos: int, rev: bool, softclip_l: int) -> int:
+	# length includes softclipping on both sides 
+	start5 = pos - softclip_l + (length of read - 1 if rev else 0) 
 	return start5
 
 def mapped(flag: int) -> bool: 
@@ -82,7 +80,7 @@ def dedupe (sam: str, umis: str) -> NULL:
 				rev_comp = True
 
 			# find the true start position
-			start5 = true_start(pos, rev_comp)
+			start5 = true_start(pos, rev_comp, softclip_l)
 
 			# check if the chrom(x,y, [1-22]), UMI (1-96), strand(1,0), and start position 
 			# are already encountered 
