@@ -39,15 +39,17 @@ def umi_read(umis: IOstr) -> list:
 	return umi_list 
 
 # getting the true start position from leftmost start and softclipping
-def true_start(pos: int, rev: bool, softclip_l: int) -> int:
+def true_start(pos: int, rev: bool, softclip_l: int, cigar: str) -> int:
 	# length includes softclipping on both sides 
-	start5 = pos - softclip_l + (length of read - 1 if rev else 0) 
+	start5 = pos - softclip_l + (length of read from cigar - 1 if rev else 0) 
 	return start5
+# test example: pos = 4, rev = 1, softclip_l = 2, cigar = 2S3M should return 6
 
+# checking if read is mapped 
 def mapped(flag: int) -> bool: 
-	if ((flag & 4) == 4):
-		return False # not mapped 
-	return True
+	# if flag is 4 then it is unmapped
+	return not ((flag & 4) == 4)
+# test example: flag of 100 should return False 
 
 # deduper function 
 def dedupe (sam: str, umis: str) -> NULL:
@@ -80,7 +82,7 @@ def dedupe (sam: str, umis: str) -> NULL:
 				rev_comp = True
 
 			# find the true start position
-			start5 = true_start(pos, rev_comp, softclip_l)
+			start5 = true_start(pos, rev_comp, softclip_l, cigar)
 
 			# check if the chrom(x,y, [1-22]), UMI (1-96), strand(1,0), and start position 
 			# are already encountered 
